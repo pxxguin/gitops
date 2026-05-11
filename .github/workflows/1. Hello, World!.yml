@@ -1,10 +1,24 @@
-name: Print hello, world!
-on: push
+name: Test Specific Branch
+on:
+  # 수동으로 워크플로를 실행할 때 입력을 받는 이벤트입니다.
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: '테스트할 브랜치 이름을 입력하세요'
+        required: true
+        default: 'main'
+
 jobs:
-  print:
+  test-code:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Hello, World!"
-          echo "This is fucking world!"
-      - uses: actions/checkout@v4
+      - name: 1. 코드를 가져옵니다.
+        uses: actions/checkout@v4
+        with:
+          # 사용자가 입력한 'target_branch' 값을 ref에 전달합니다.
+          ref: ${{ github.event.inputs.target_branch }}
+
+      - name: 2. 현재 가져온 브랜치 확인
+        run: |
+          echo "현재 가져온 코드는 ${{ github.event.inputs.target_branch }} 브랜치입니다!"
+          git status
